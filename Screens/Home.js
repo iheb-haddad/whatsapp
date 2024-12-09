@@ -9,7 +9,7 @@ import ListProfils from"./Home/ListProfils";
 import Groupes from "./Home/Groupes";
 import MyProfil from "./Home/MyProfil";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { useEffect } from "react";
+import { useEffect , useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import firebase from "../Config";
 import { LogBox } from "react-native";
@@ -22,9 +22,9 @@ LogBox.ignoreLogs([
 
 
 const Tab = createMaterialBottomTabNavigator();
-export default function Home(props) {
+export default function Home() {
   const auth = firebase.auth().currentUser.uid;
-  // const [profileExist, setProfileExist] = useState(true);
+  const [profileExist, setProfileExist] = useState(true);
 
   const navigation = useNavigation();
 
@@ -34,15 +34,37 @@ export default function Home(props) {
     }
 
     const userProfileRef = ref_tableProfils.child(`unprofil${auth}`);
-    if (userProfileRef) {
-      userProfileRef.update({ isConnected: true });
-      // setProfileExist(true);
-    } else{
-      // setProfileExist(false);
+    userProfileRef.on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setProfileExist(true);
+      } else {
+        setProfileExist(false);
+      }
     }
+    );
+
+    return () => userProfileRef.off();
   }, []);
 
   return (
+    <>{!profileExist ?
+      <Tab.Navigator
+      initialRouteName="MyProfile"
+      activeColor="#000"
+      inactiveColor="#fff"
+      activeBackgroundColor="#fff"
+      barStyle={{ backgroundColor: "#0b75a7" }}
+      activeTintColor="#000"
+    >
+      <Tab.Screen name="MyProfile" component={MyProfil} 
+          options={{
+            tabBarIcon: ({ focused, color }) => (
+              <Icon name="person" size={focused ? 30 : 24} color={color} />
+            ),
+          }}/>
+    </Tab.Navigator>
+    :
     <Tab.Navigator
       initialRouteName="ListProfils"
       activeColor="#000"
@@ -70,6 +92,8 @@ export default function Home(props) {
             ),
           }}/>
     </Tab.Navigator>
+}
+    </>
   );
 }
 

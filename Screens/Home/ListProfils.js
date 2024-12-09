@@ -9,6 +9,8 @@ import {
   Image,
   TouchableOpacity,
   Linking,
+  ImageBackground,
+  TextInput,
 } from "react-native";
 import firebase from "../../Config";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -18,7 +20,9 @@ const ref_tableProfils = database.ref("Tabledeprofils");
 
 export default function ListProfils(props) {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const userId = firebase.auth().currentUser.uid;
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     ref_tableProfils.on("value", (snapshot) => {
@@ -34,6 +38,16 @@ export default function ListProfils(props) {
     };
   }, [userId]);
 
+  useEffect(() => {
+      // Filter the data based on the search input
+      const filtered = data.filter(
+        (profile) =>
+          profile.nom.toLowerCase().includes(search.toLowerCase()) ||
+          profile.pseudo.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredData(filtered);
+  }, [search,data]);
+
   const handleCall = (phoneNumber) => {
     const url = `tel:${phoneNumber}`;
     Linking.openURL(url).catch((err) =>
@@ -42,12 +56,22 @@ export default function ListProfils(props) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: "#0b75a7" }]}>
+    <ImageBackground style={styles.container}
+    source={require("../../assets/background.jpg")}
+      >
       <StatusBar style="light" />
       <Text style={styles.textstyle}>List profils</Text>
 
+      <TextInput
+        style={styles.textinputstyle}
+        placeholder="Search profiles"
+        placeholderTextColor="#bbb"
+        value={search}
+        onChangeText={(text) => setSearch(text)}
+      />
+
         <FlatList
-          data={data}
+          data={filteredData}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
@@ -96,7 +120,7 @@ export default function ListProfils(props) {
           }}
           style={styles.listContainer}
         />
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -117,6 +141,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     paddingTop: 45,
+    paddingBottom: 10,
   },
   container: {
     flex: 1,
@@ -126,15 +151,14 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: "100%",
-    padding: 10,
+    padding: 2,
+    marginTop: 10,
   },
   contactContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    marginBottom: 10,
-    borderRadius: 8,
-    padding: 10,
+    padding: 16,
     elevation: 3,
     shadowColor: "#000",
     shadowOpacity: 0.2,
@@ -185,7 +209,6 @@ const styles = StyleSheet.create({
   },
   phoneIcon: {
     padding: 10,
-    backgroundColor: "#E8F5E9",
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",

@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import firebase from "../Config";
 import { saveConnectionStatus } from "../utils/ConnectionUtils";
+import { Ionicons } from "@expo/vector-icons";
 
 const auth = firebase.auth();
 
@@ -20,7 +21,7 @@ export default function NewUser(props) {
 
   return (
     <ImageBackground
-      source={require("../assets/loginback.avif")} // Vibrant gradient background
+      source={require("../assets/background.jpg")} // Vibrant gradient background
       style={styles.container}
     >
       <StatusBar style="light" />
@@ -28,31 +29,40 @@ export default function NewUser(props) {
         <Text style={styles.title}>Sign Up</Text>
 
         {/* Email Input */}
-        <TextInput
-          keyboardType="email-address"
-          placeholder="Enter your email"
-          placeholderTextColor="#ccc"
-          style={styles.textInput}
-          onChangeText={(text) => setEmail(text)}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={20} color="#6C63FF" />
+          <TextInput
+            keyboardType="email-address"
+            placeholder="Enter your email"
+            placeholderTextColor="#ccc"
+            style={styles.textInput}
+            onChangeText={(text) => setEmail(text)}
+          />
+        </View>
 
         {/* Password Input */}
-        <TextInput
-          placeholder="Enter your password"
-          placeholderTextColor="#ccc"
-          secureTextEntry={true}
-          style={styles.textInput}
-          onChangeText={(text) => setPwd(text)}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#6C63FF" />
+          <TextInput
+            placeholder="Enter your password"
+            placeholderTextColor="#ccc"
+            secureTextEntry={true}
+            style={styles.textInput}
+            onChangeText={(text) => setPwd(text)}
+          />
+        </View>
 
         {/* Confirm Password Input */}
-        <TextInput
-          placeholder="Confirm your password"
-          placeholderTextColor="#ccc"
-          secureTextEntry={true}
-          style={styles.textInput}
-          onChangeText={(text) => setConfirmPwd(text)}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#6C63FF" />
+          <TextInput
+            placeholder="Confirm your password"
+            placeholderTextColor="#ccc"
+            secureTextEntry={true}
+            style={styles.textInput}
+            onChangeText={(text) => setConfirmPwd(text)}
+          />
+        </View>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
@@ -103,17 +113,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    backgroundColor: "#ffffffee", // Transparent white
-    height: 450,
+    backgroundColor: "rgba(255, 255, 255, 0.9)", // Semi-transparent white
+    borderRadius: 25,
+    padding: 25,
     width: "85%",
     alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    padding: 25,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
-    shadowRadius: 15,
+    shadowRadius: 10,
     elevation: 10,
   },
   title: {
@@ -122,21 +130,23 @@ const styles = StyleSheet.create({
     color: "#4A4A4A",
     marginBottom: 20,
   },
-  textInput: {
-    height: 50,
-    width: "100%",
-    backgroundColor: "#F5F6FA",
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F3F4F6",
     borderRadius: 25,
-    paddingHorizontal: 20,
-    fontSize: 16,
-    marginBottom: 15,
+    paddingHorizontal: 15,
+    marginVertical: 10,
+    width: "100%",
     borderWidth: 1,
-    borderColor: "#E4E5E9",
+    borderColor: "#E5E7EB",
+  },
+  textInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    marginLeft: 10,
     color: "#333",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
   },
   buttonContainer: {
     flexDirection: "row",

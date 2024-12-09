@@ -92,11 +92,9 @@ export default function ListGroups(props) {
   };
 
   return (
-    <View
-      style={[styles.container,
-        { backgroundColor : "#0b75a7" }
-      ]}
-    >
+    <ImageBackground style={styles.container}
+    source={require("../../assets/background.jpg")}
+      >
       <StatusBar style="light" />
       <Text style={styles.textstyle}>List Groups</Text>
 
@@ -113,7 +111,6 @@ export default function ListGroups(props) {
             >
               <View style={styles.contactInner}>
                 <Text style={styles.contactName}>{item.name}</Text>
-                <Icon name="group" size={25} color="#4CAF50" />
               </View>
             </TouchableHighlight>
           )}
@@ -159,7 +156,7 @@ export default function ListGroups(props) {
                       selectedProfiles.includes(item.id) && styles.selectedProfile,
                     ]}
                   >
-                    {item.nom} (@{item.pseudo})
+                    {item.nom}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -172,7 +169,7 @@ export default function ListGroups(props) {
           </View>
         </View>
       </Modal>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -201,16 +198,22 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     width: "100%",
-    padding: 10,
+    padding: 2,
+    marginTop: 10,
   },
   contactContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    marginBottom: 10,
-    borderRadius: 8,
-    padding: 14,
+    padding: 20,
     elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 3,
+    borderColor : "black",
+    borderWidth : 1,
+    marginBottom: 1,
   },
   contactInner: {
     flexDirection: "row",
@@ -227,7 +230,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "blue",
     padding: 15,
     borderRadius: 50,
     elevation: 5,

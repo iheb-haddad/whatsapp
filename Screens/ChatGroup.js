@@ -13,6 +13,7 @@ import {
   Image,
   Modal,
   Linking,
+  ImageBackground,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import firebase from "../Config"; // Update this to your Firebase config file
@@ -116,7 +117,6 @@ export default function Chat(props) {
     setIsTyping(false);
   };
 
-
   const renderMessage = ({ item }) => {
     const isMe = item.sender === userId;
 
@@ -131,18 +131,6 @@ export default function Chat(props) {
             },
           ]}
         >
-          {!isMe && item.type === "image" && (
-            <Text
-              style={{
-                color: "#000",
-                fontSize: 12,
-                marginBottom: 5,
-                marginLeft: 5,
-              }}
-            >
-              {profiles.find((profile) => profile.id === item.sender)?.pseudo}
-            </Text>
-          )}
           {item.type === "text" ? (
             <Text style={styles.messageText}>{item.text}</Text>
           ) : item.type === "location" ? (
@@ -150,11 +138,10 @@ export default function Chat(props) {
               onPress={() => Linking.openURL(item.text)} // Open the Google Maps link
               style={styles.locationMessage}
             >
-              <Text style={styles.locationText}>📍 View Location</Text>
+              <Text style={styles.locationText}>Ma Position</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity
-            >
+            <TouchableOpacity>
               <Image
                 source={{ uri: item.imageUrl }}
                 style={styles.imageMessage}
@@ -277,7 +264,10 @@ export default function Chat(props) {
       <StatusBar style="auto" />
       {/* Chat Header */}
       <ChatGroupHeader group={group} />
-
+      <ImageBackground
+        source={require("../assets/chatBack.jpg")}
+        style={{ flex: 1 }}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.flexGrow}
@@ -325,6 +315,7 @@ export default function Chat(props) {
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }

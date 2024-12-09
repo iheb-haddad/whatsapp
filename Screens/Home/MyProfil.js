@@ -12,7 +12,7 @@ import {
   View,
 } from "react-native";
 import firebase from "../../Config";
-import { supabase } from "../../Config/initSupabase"; // Import Supabase client
+import { supabase } from "../../Config/initSupabase";
 import * as ImagePicker from "expo-image-picker";
 import { decode } from "base64-arraybuffer";
 import { useNavigation } from "@react-navigation/native";
@@ -21,17 +21,16 @@ import { Ionicons } from "@expo/vector-icons";
 const database = firebase.database();
 const ref_tableProfils = database.ref("Tabledeprofils");
 
-export default function MyProfil(props) {
+export default function MyProfil() {
   const [nom, setNom] = useState("");
   const [pseudo, setPseudo] = useState("");
   const [telephone, setTelephone] = useState("");
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [uriImage, setUriImage] = useState("");
-  const userId = firebase.auth().currentUser.uid; // Get the authenticated user's ID
+  const userId = firebase.auth().currentUser.uid;
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  // Fetch user data on mount
   useEffect(() => {
     const userProfileRef = ref_tableProfils.child(`unprofil${userId}`);
     userProfileRef.on("value", (snapshot) => {
@@ -47,13 +46,11 @@ export default function MyProfil(props) {
       }
     });
 
-    return () => userProfileRef.off(); // Cleanup listener on unmount
+    return () => userProfileRef.off();
   }, []);
 
-  // Image Picker Handler
   const handleImagePick = async (fromCamera) => {
     try {
-      // Request media library permissions
       const permissionResult = fromCamera
         ? await ImagePicker.requestCameraPermissionsAsync()
         : await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -88,22 +85,18 @@ export default function MyProfil(props) {
         if (!uri) throw new Error("Failed to get image base64 data.");
         setUriImage(result.assets[0].uri);
         setIsDefaultImage(false);
-        //Upload to Supabase
         await uploadImageToSupabase(uri);
       }
     } catch (error) {
       console.log(error);
     }
   };
-  // Upload Image to Supabase Storage
+
   const uploadImageToSupabase = async (uri) => {
     try {
-      const fileName = `${userId}-${Date.now()}.jpg`; // Generate unique file name
-      // const response = await fetch(uri);
-      // const blob = await response.blob();
-
+      const fileName = `${userId}-${Date.now()}.jpg`;
       const { data, error } = await supabase.storage
-        .from("profile-images") // Bucket name in Supabase
+        .from("profile-images")
         .upload(fileName, decode(uri), { contentType: "image/jpeg" });
 
       if (error) {
@@ -116,11 +109,7 @@ export default function MyProfil(props) {
         "/storage/v1/object/public/" +
         data.fullPath;
 
-      //Save URL to Firebase
-      await ref_tableProfils.child(`unprofil${userId}`).update({
-        profileImage: imageUrl,
-      });
-      // Alert.alert("Success", "Profile picture updated!");
+      setUriImage(imageUrl);
     } catch (error) {
       console.log(error);
     }
@@ -139,8 +128,12 @@ export default function MyProfil(props) {
         nom: nom,
         pseudo: pseudo,
         telephone: telephone,
+        profileImage: uriImage,
       })
-      .then(() => console.log("Profile updated successfully!"))
+      .then(() => {
+        console.log("Profile updated successfully!")
+      }
+    )
       .catch((error) => console.log(error));
   };
 
@@ -155,61 +148,46 @@ export default function MyProfil(props) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: "#0b75a7" }]}>
+    <View style={styles.container}>
       <StatusBar style="light" />
-      <Text style={styles.textstyle}>My Account</Text>
+      <Text style={styles.header}>My Profile</Text>
 
       <View style={styles.imageContainer}>
-        <TouchableHighlight>
-          <Image
-            source={
-              isDefaultImage
-                ? require("../../assets/profil.png")
-                : { uri: uriImage }
-            }
-            style={styles.profileImage}
-          />
-        </TouchableHighlight>
-
+        <Image
+          source={
+            isDefaultImage
+              ? require("../../assets/profil.png")
+              : { uri: uriImage }
+          }
+          style={styles.profileImage}
+        />
         <TouchableOpacity
           style={styles.cameraIcon}
           onPress={() => setModalVisible(true)}
         >
-          <Image
-            source={require("../../assets/camera-icon.png")} // Replace with your camera icon
-            style={{ width: 30, height: 30 }}
-          />
+          <Ionicons name="camera" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
 
-      <Modal transparent={true} visible={isModalVisible} animationType="slide">
-        <TouchableOpacity style={styles.modalContainer}
-        onPress={() => setModalVisible(false)}>
+      <Modal transparent={true} visible={isModalVisible} animationType="fade">
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        >
           <View style={styles.modalContent}>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => {
-                handleImagePick(true); // Open Camera
-              }}
+              onPress={() => handleImagePick(true)}
             >
               <Text style={styles.modalButtonText}>Open Camera</Text>
-              <Ionicons name="camera" size={24} color="#0b75a7" />
+              <Ionicons name="camera" size={24} color="#000" />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => {
-                handleImagePick(false); // Open Gallery
-              }}
+              onPress={() => handleImagePick(false)}
             >
               <Text style={styles.modalButtonText}>Select from Gallery</Text>
-              <Ionicons name="image" size={24} color="#0b75a7" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>Cancel</Text>
-              <Ionicons name="close" size={24} color="#0b75a7" />
+              <Ionicons name="image" size={24} color="#000" />
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -217,43 +195,35 @@ export default function MyProfil(props) {
 
       <TextInput
         value={nom}
-        onChangeText={(text) => setNom(text)}
-        textAlign="center"
-        placeholderTextColor="#fff"
-        placeholder="Nom"
-        keyboardType="default"
-        style={styles.textinputstyle}
+        onChangeText={setNom}
+        placeholder="Name"
+        style={styles.input}
       />
       <TextInput
         value={pseudo}
-        onChangeText={(text) => setPseudo(text)}
-        textAlign="center"
-        placeholderTextColor="#fff"
-        placeholder="Pseudo"
-        keyboardType="default"
-        style={styles.textinputstyle}
+        onChangeText={setPseudo}
+        placeholder="Username"
+        style={styles.input}
       />
       <TextInput
         value={telephone}
-        onChangeText={(text) => setTelephone(text)}
-        placeholderTextColor="#fff"
-        textAlign="center"
-        placeholder="Numero"
+        onChangeText={setTelephone}
+        placeholder="Phone"
         keyboardType="phone-pad"
-        style={styles.textinputstyle}
+        style={styles.input}
       />
 
-      <View style={styles.actionsContainer}>
+      <View style={styles.actionContainer}>
         <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
-          <Ionicons name="save" size={24} color="#fff" />
-          <Text style={styles.buttonText}>Save Contact</Text>
+          <Ionicons name="save" size={20} color="#fff" />
+          <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.deconnectionButton}
+          style={styles.disconnectButton}
           onPress={handleDisconnect}
         >
-          <Ionicons name="log-out" size={24} color="#fff" />
-          <Text style={styles.buttonText}>Disconnect</Text>
+          <Ionicons name="log-out" size={20} color="#fff" />
+          <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -261,95 +231,100 @@ export default function MyProfil(props) {
 }
 
 const styles = StyleSheet.create({
-  imageContainer: {
-    position: "relative",
-  },
-  profileImage: {
-    height: 200,
-    width: 200,
-    borderRadius: 100,
-  },
-  cameraIcon: {
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-    backgroundColor: "#FFF",
-    borderRadius: 15,
-    padding: 5,
-  },
-  textinputstyle: {
-    fontWeight: "bold",
-    backgroundColor: "#0004",
-    fontSize: 20,
-    color: "#fff",
-    width: "75%",
-    height: 50,
-    borderRadius: 10,
-    margin: 5,
-  },
-  textstyle: {
-    fontSize: 36,
-    fontFamily: "serif",
-    color: "white",
-    fontWeight: "bold",
-  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    padding: 20,
+    backgroundColor: "#f9f9f9",
     alignItems: "center",
     justifyContent: "center",
   },
-  actionsContainer: {
-    marginTop: 40,
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 20,
+  },
+  imageContainer: {
+    position: "relative",
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 2,
+    borderColor: "#ddd",
+  },
+  cameraIcon: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    backgroundColor: "#007bff",
+    borderRadius: 15,
+    padding: 5,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    borderRadius: 8,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 15,
+    backgroundColor: "#fff",
+    fontSize: 16,
+    color: "#333",
+  },
+  actionContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "80%",
+    justifyContent: "space-between",
+    marginTop: 20,
+    width: "100%",
   },
   saveButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#0F52BA",
+    backgroundColor: "#28a745",
     padding: 12,
     borderRadius: 8,
-    elevation: 3,
+    flex: 1,
+    marginRight: 10,
   },
-  deconnectionButton: {
+  disconnectButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#D9534F",
+    backgroundColor: "#dc3545",
     padding: 12,
     borderRadius: 8,
-    elevation: 3,
+    flex: 1,
+    marginLeft: 10,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    marginLeft: 10,
+    marginLeft: 8,
+    fontWeight: "bold",
   },
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
+    width: 300,
+    padding: 20,
     backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 20,
     alignItems: "center",
-    width: "90%",
   },
   modalButton: {
     flexDirection: "row",
-    padding: 10,
-    borderRadius: 5,
-    justifyContent: "space-between",
-    alignItems: "start",
-    width: "100%",
+    alignItems: "center",
+    marginVertical: 10,
   },
   modalButtonText: {
-    color: "#0b75a7",
     fontSize: 16,
-    fontWeight: "bold",
+    marginRight: 8,
+    color: "#333",
   },
 });

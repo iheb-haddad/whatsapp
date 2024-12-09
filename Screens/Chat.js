@@ -12,6 +12,7 @@ import {
   Image,
   Modal,
   Linking,
+  ImageBackground
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import firebase from "../Config"; // Update this to your Firebase config file
@@ -135,7 +136,7 @@ export default function Chat(props) {
             onPress={() => Linking.openURL(item.text)} // Open the Google Maps link
             style={styles.locationMessage}
           >
-            <Text style={styles.locationText}>📍 View Location</Text>
+            <Text style={styles.locationText}>Ma Position</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -271,7 +272,10 @@ export default function Chat(props) {
       <StatusBar style="auto" />
       {/* Chat Header */}
       <ChatHeader profile={profile} idDisc={iddisc} />
-
+      <ImageBackground
+        source={require("../assets/chatBack.jpg")}
+        style={{ flex: 1 }}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.flexGrow}
@@ -327,6 +331,7 @@ export default function Chat(props) {
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
+      </ImageBackground>
     </SafeAreaView>
   );
 }

@@ -6,8 +6,9 @@ import {
   TextInput,
   View,
   TouchableOpacity,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import firebase from "../Config";
 import { useNavigation } from "@react-navigation/native";
 import { saveConnectionStatus } from "../utils/ConnectionUtils";
@@ -20,34 +21,39 @@ export default function Auth(props) {
 
   return (
     <ImageBackground
-      source={require("../assets/loginback.avif")} // Use a vibrant gradient background image
+      source={require("../assets/background.jpg")} // Background image
       style={styles.container}
     >
       <StatusBar style="light" />
       <View style={styles.card}>
-        <Text style={styles.welcomeText}>Welcome Back!</Text>
 
         {/* Email Input */}
-        <TextInput
-          keyboardType="email-address"
-          placeholder="Enter your email"
-          placeholderTextColor="#888"
-          onChangeText={(text) => {
-            email = text;
-          }}
-          style={styles.textInput}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="mail-outline" size={20} color="#6C63FF" />
+          <TextInput
+            keyboardType="email-address"
+            placeholder="Enter your email"
+            placeholderTextColor="#888"
+            onChangeText={(text) => {
+              email = text;
+            }}
+            style={styles.textInput}
+          />
+        </View>
 
         {/* Password Input */}
-        <TextInput
-          placeholder="Enter your password"
-          placeholderTextColor="#888"
-          secureTextEntry={true}
-          style={styles.textInput}
-          onChangeText={(text) => {
-            password = text;
-          }}
-        />
+        <View style={styles.inputContainer}>
+          <Ionicons name="lock-closed-outline" size={20} color="#6C63FF" />
+          <TextInput
+            placeholder="Enter your password"
+            placeholderTextColor="#888"
+            secureTextEntry={true}
+            onChangeText={(text) => {
+              password = text;
+            }}
+            style={styles.textInput}
+          />
+        </View>
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
@@ -71,7 +77,12 @@ export default function Auth(props) {
             <Text style={styles.buttonText}>Login</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.exitButton}>
+          <TouchableOpacity
+            style={styles.exitButton}
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -83,7 +94,7 @@ export default function Auth(props) {
             props.navigation.navigate("NewUser");
           }}
         >
-          Don't have an account? Sign up
+          <Text style={styles.signUpLink}>Create new user</Text>
         </Text>
       </View>
     </ImageBackground>
@@ -93,18 +104,15 @@ export default function Auth(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   card: {
-    backgroundColor: "#ffffffee", // Transparent white
-    height: 400,
+    backgroundColor: "rgba(255, 255, 255, 0.9)", // Semi-transparent white
+    borderRadius: 25,
+    padding: 25,
     width: "85%",
     alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
@@ -112,38 +120,43 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   welcomeText: {
-    fontSize: 30,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "600",
     color: "#3A3D42",
     marginBottom: 20,
-    fontFamily: "Arial",
-    textAlign: "center",
   },
-  textInput: {
-    height: 50,
-    width: "100%",
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#F3F4F6",
     borderRadius: 25,
     paddingHorizontal: 15,
-    fontSize: 16,
-    marginBottom: 20,
+    marginVertical: 10,
+    width: "100%",
     borderWidth: 1,
     borderColor: "#E5E7EB",
+  },
+  textInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    marginLeft: 10,
     color: "#333",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 10,
+    marginTop: 20,
   },
   submitButton: {
     backgroundColor: "#6C63FF",
-    borderRadius: 25,
     paddingVertical: 12,
-    paddingHorizontal: 20,
-    width: "45%",
+    borderRadius: 25,
     alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    marginRight: 10,
     shadowColor: "#6C63FF",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
@@ -152,11 +165,12 @@ const styles = StyleSheet.create({
   },
   exitButton: {
     backgroundColor: "#FF5E57",
-    borderRadius: 25,
     paddingVertical: 12,
-    paddingHorizontal: 20,
-    width: "45%",
+    borderRadius: 25,
     alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+    marginLeft: 10,
     shadowColor: "#FF5E57",
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.5,
@@ -165,15 +179,17 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 16,
+    fontWeight: "600",
   },
   newUserText: {
-    width: "100%",
-    textAlign: "center",
     color: "#6C63FF",
-    fontWeight: "600",
     marginTop: 20,
+    fontSize: 16,
+    textAlign: "center",
+  },
+  signUpLink: {
+    fontWeight: "bold",
     textDecorationLine: "underline",
   },
 });
