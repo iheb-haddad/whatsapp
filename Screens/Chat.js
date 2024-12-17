@@ -8,11 +8,10 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
   Image,
-  Modal,
   Linking,
-  ImageBackground
+  ImageBackground,
+  LogBox
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import firebase from "../Config"; // Update this to your Firebase config file
@@ -24,6 +23,11 @@ import * as ImagePicker from "expo-image-picker";
 // import * as DocumentPicker from "expo-document-picker";
 import { decode } from "base64-arraybuffer";
 import * as Location from "expo-location";
+LogBox.ignoreLogs([
+  'Text strings must be rendered within a <Text> component.',
+]);
+
+
 const reflesdiscussions = firebase.database().ref("lesdiscussions");
 
 export default function Chat(props) {
@@ -124,7 +128,7 @@ export default function Chat(props) {
         style={[
           styles.messageContainer,
           isMe ? styles.myMessage : styles.otherMessage,
-          (item.type === "image" || item.status === "deleted") && {
+          (item.type === "image") && {
             backgroundColor: "transparent",
           },
         ]}

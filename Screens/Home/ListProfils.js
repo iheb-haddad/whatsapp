@@ -11,9 +11,14 @@ import {
   Linking,
   ImageBackground,
   TextInput,
+  LogBox
 } from "react-native";
 import firebase from "../../Config";
 import Icon from "react-native-vector-icons/MaterialIcons";
+
+LogBox.ignoreLogs([
+  'Text strings must be rendered within a <Text> component.',
+]);
 
 const database = firebase.database();
 const ref_tableProfils = database.ref("Tabledeprofils");

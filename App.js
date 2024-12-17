@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NewUser from "./Screens/NewUser";
 import Home from "./Screens/Home";
 import Chat from "./Screens/Chat";
-import ChatGroup from "./Screens/ChatGroup";
 import { useEffect, useState } from 'react';
 import FlashMessage from "react-native-flash-message";
 import firebase from "./Config";
@@ -36,7 +35,6 @@ export default function App() {
         <Stack.Screen name="NewUser" component={NewUser} />
         <Stack.Screen name="Home" component={Home} screenOptions={{headerShown : true}}/>
         <Stack.Screen name="Chat" component={Chat} />
-        <Stack.Screen name="ChatGroup" component={ChatGroup} />
       </Stack.Navigator>
     </NavigationContainer>
   );
