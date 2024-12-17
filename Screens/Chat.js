@@ -193,7 +193,7 @@ export default function Chat(props) {
         await uploadImageToSupabase(uri);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to pick image.");
+      console.log("Failed to pick image.");
     }
   };
 
@@ -230,7 +230,7 @@ export default function Chat(props) {
       ref_unediscussion_key.set(newMessage);
       // Alert.alert("Success", "Profile picture updated!");
     } catch (error) {
-      Alert.alert("Error", "Failed to upload image.");
+      console.log("image uplod failed");
     }
   };
 
@@ -239,10 +239,7 @@ export default function Chat(props) {
       // Request location permission
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Permission Denied",
-          "You need to enable location access to share your location"
-        );
+         console.log("You need to enable location");
         return;
       }
 
@@ -267,7 +264,6 @@ export default function Chat(props) {
       ref_unediscussion_key.set(newMessage);
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "Failed to share location.");
     }
   };
 
