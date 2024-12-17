@@ -19,8 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ChatHeader from "../components/ChatHeader";
 import { supabase } from "../Config/initSupabase"; // Import Supabase client
 import * as ImagePicker from "expo-image-picker";
-// import * as FileSystem from "expo-file-system";
-// import * as DocumentPicker from "expo-document-picker";
+import { Alert } from "react-native";
 import { decode } from "base64-arraybuffer";
 import * as Location from "expo-location";
 LogBox.ignoreLogs([
@@ -224,7 +223,6 @@ export default function Chat(props) {
         date: new Date().toISOString(),
         receiver: profile.id,
         type: "image",
-        reactions: [],
       };
 
       ref_unediscussion_key.set(newMessage);

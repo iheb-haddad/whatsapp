@@ -47,8 +47,8 @@ export default function ListProfils(props) {
       // Filter the data based on the search input
       const filtered = data.filter(
         (profile) =>
-          profile.nom.toLowerCase().includes(search.toLowerCase()) ||
-          profile.pseudo.toLowerCase().includes(search.toLowerCase())
+          profile.nom?.toLowerCase().includes(search.toLowerCase()) ||
+          profile.pseudo?.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredData(filtered);
   }, [search,data]);
